@@ -1,13 +1,14 @@
 #!/usr/bin/puppet
 
-# Install the latest version of Flask and Werkzeug using pip3
+# Install Flask version 2.1.0 using pip3
 package { 'flask':
-  ensure   => 'latest',
+  ensure   => '2.1.0',
   provider => 'pip3',
 }
 
+# Ensure that Werkzeug is installed with version 2.0.2
 package { 'werkzeug':
-  ensure   => 'latest',
+  ensure   => '2.0.2',
   provider => 'pip3',
 }
 
