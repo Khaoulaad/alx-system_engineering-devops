@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+sudo vi /etc/nginx/nginx.conf
+
