@@ -1,20 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Installs Nginx
 
-# Update package list and install nginx
-sudo apt-get update -y
-sudo apt-get install -y nginx
-
-# Configure Nginx to listen on port 80
-sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
-
-# Restart Nginx (without using systemctl)
-sudo /etc/init.d/nginx restart
-
-# Create a default HTML page with the content "Hello World!"
-echo "Hello World!" | sudo tee /var/www/html/index.html > /dev/null
-
-# Display a message indicating the script has completed successfully
-echo "Nginx installed and configured. Hello World page created."
-
-# End of script
-
+apt-get update
+apt-get install -y nginx
+echo "Holberton School" > /var/www/html/index.html
+service nginx start
