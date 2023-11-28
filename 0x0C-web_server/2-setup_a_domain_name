@@ -1,4 +1,1 @@
-#!/bin/bash
-
-# Provide the domain name only (example: foobar.tech), no subdomain (example: www.foobar.tech)
-echo "khaoulatech.tech"
+khaoulatech.tech
