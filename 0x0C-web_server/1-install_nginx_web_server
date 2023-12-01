@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
+# Script that configures a new Ubuntu machine to respect above requirements
 
-# Install nginx on web server
-sudo apt-get -y update
-sudo apt-get -y install nginx
-
-# Configure Nginx to listen on port 80
-sudo ufw allow "Nginx HTTP"
-
-# Create a sample HTML file with "Hello World!" content
-sudo sh -c 'echo "Hello World!" > /var/www/html/index.html'
-
-# Restart Nginx (without using systemctl)
-sudo service nginx restart
-
+sudo apt-get update
+sudo apt-get install -y nginx
+sudo ufw allow 'Nginx HTTP'
+echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html
+sudo service nginx start
