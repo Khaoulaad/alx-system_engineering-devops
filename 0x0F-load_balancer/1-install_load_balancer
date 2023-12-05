@@ -13,13 +13,13 @@ HAPROXY_LB_CONFIG=\
 "
 #--$DOMAIN_NAME-params-begin--
 backend $DOMAIN_NAME-backend
-	balance roundrobin
-	server 410727-web-01 khaoula.tech:8080 check
-	server 410727-web-02 khaoula.tech:8080 check
+        balance roundrobin
+        server 410727-web-01 54.175.189.228:8080 check
+        server 410727-web-02 54.90.26.61:8080 check
 frontend $DOMAIN_NAME-frontend
-	bind *:8080
-	mode http
-	default_backend $DOMAIN_NAME-backend
+        bind *:8080
+        mode http
+        default_backend $DOMAIN_NAME-backend
 #--$DOMAIN_NAME-params-end--
 "
 
@@ -29,26 +29,26 @@ frontend $DOMAIN_NAME-frontend
 CONFIG_WORDS=$(grep -Eco "$DOMAIN_NAME-backend" < $CONFIG_FILE)
 
 if [ "$(grep -Eco '^ENABLED=[01]$' < $INIT_FILE)" -gt 0 ]; then
-	sed -i 's/^ENABLED=0$/ENABLED=1/' "$INIT_FILE"
+        sed -i 's/^ENABLED=0$/ENABLED=1/' "$INIT_FILE"
 else
-	echo 'ENABLED=1' >> $INIT_FILE
+        echo 'ENABLED=1' >> $INIT_FILE
 fi
 
 if [ "$CONFIG_WORDS" -eq 0 ]; then
-	echo -e "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
+        echo -e "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
 else
-	start_tkn="#--$DOMAIN_NAME-params-begin--"
-	end_tkn="#--$DOMAIN_NAME-params-end--"
-	a=$(grep -onE "$start_tkn" < "$CONFIG_FILE" | cut -d : -f1)
-	b=$(grep -onE "$end_tkn" < "$CONFIG_FILE" | cut -d : -f1)
-	a=$((a - 1))
-	b=$((b + 1))
-	sed -i "$a,$b"d "$CONFIG_FILE"
-	echo -en "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
+        start_tkn="#--$DOMAIN_NAME-params-begin--"
+        end_tkn="#--$DOMAIN_NAME-params-end--"
+        a=$(grep -onE "$start_tkn" < "$CONFIG_FILE" | cut -d : -f1)
+        b=$(grep -onE "$end_tkn" < "$CONFIG_FILE" | cut -d : -f1)
+        a=$((a - 1))
+        b=$((b + 1))
+        sed -i "$a,$b"d "$CONFIG_FILE"
+        echo -en "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
 fi
 
 if [ "$(pgrep -c haproxy)" -le 0 ]; then
-	service haproxy start
+        systemctl start haproxy
 else
-	service haproxy restart
+        systemctl restart haproxy
 fi
