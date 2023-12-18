@@ -37,7 +37,7 @@ defaults
 backend khaoula.tech-backend
         balance roundrobin
     server 410727-web-01 54.175.189.228:80 check
-    server 410727-web-02 54.90.26.61:80 check
+    server 410727-web-02 34.207.64.54:80 check
 
 frontend khaoula.tech-frontend
 
