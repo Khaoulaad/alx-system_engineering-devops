@@ -1,38 +1,29 @@
 #!/usr/bin/python3
 """
-script using this REST API, for a given employee ID,
-returns information about his/her TODO list progress.
+Module returning information for a given employee ID.
 """
+
 import requests
-import sys
+from sys import argv
 
 
-def fetch_employee_todo_list(employee_id):
-    base_url = 'https://jsonplaceholder.typicode.com'
+def fetch_data(id):
+    req = requests.get("https://jsonplaceholder.typicode.com/users/{}"
+                       .format(id))
+    user = req.json()
+    inf = "Employee {} is done with tasks".format(user["name"])
 
-    # Fetch user info
-    user_response = requests.get(f'{base_url}/users/{employee_id}')
-    user_data = user_response.json()
-
-    # Fetch user's TODO list
-    todo_response = requests.get(f'{base_url}/todos?userId={employee_id}')
-    todo_data = todo_response.json()
-
-    # Filter completed tasks
-    completed_tasks = [task for task in todo_data if task['completed']]
-
-    # Display information
-    print(f"Employee {user_data['name']} is done with tasks "
-      f"({len(completed_tasks)}/{len(todo_data)}):")
-
-    for task in completed_tasks:
-        print(f"\t{task['title']}")
+    req = requests.get("https://jsonplaceholder.typicode.com/users/{}/todos"
+                       .format(id))
+    todos = req.json()
+    inf += "({}/{}):".format(
+                        sum(1 for todo in todos if todo["completed"]),
+                        len(todos))
+    for todo in todos:
+        if todo["completed"]:
+            inf += "\n\t {}".format(todo["title"])
+    print(inf)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <employee_id>")
-        sys.exit(1)
-
-    employee_id = int(sys.argv[1])
-    fetch_employee_todo_list(employee_id)
+    fetch_data(argv[1])
