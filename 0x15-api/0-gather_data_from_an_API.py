@@ -23,7 +23,7 @@ def fetch_employee_todo_list(employee_id):
 
     # Display information
     print(f"Employee {user_data['name']} is done with tasks "
-          f"({len(completed_tasks)}/{len(todo_data)}):")
+      f"({len(completed_tasks)}/{len(todo_data)}):")
 
     for task in completed_tasks:
         print(f"\t{task['title']}")
