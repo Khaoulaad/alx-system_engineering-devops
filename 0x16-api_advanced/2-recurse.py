@@ -1,32 +1,43 @@
 #!/usr/bin/python3
-"""Module that consumes the Reddit API and returns a list containing the
-titles of all hot articles for a given subreddit."""
+""" simple comment """
+from operator import itemgetter
 import requests
 
 
-def recurse(subreddit, hot_list=[], n=0, after=None):
-    """ queries the Reddit API and returns a list containing the titles of
-    all hot articles for a given subreddit
-
-    The Reddit API uses pagination for separating pages of responses.
-    If not a valid subreddit, return None.
-
-    Args:
-        subreddit (str): subreddit.
-        hot_list (list, optional): list of titles. Defaults to [].
-
-    Returns:
-        list: list of titles.
-    """
-    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    headers = {'user-agent': 'custom'}
-    r = requests.get(url, headers=headers, allow_redirects=False)
-    if r.status_code == 200:
-        r = r.json()
-        for post in r.get('data').get('children'):
-            hot_list.append(post.get('data').get('title'))
-        if r.get('data').get('after'):
-            recurse(subreddit, hot_list)
-        return hot_list
-    else:
-        return None
+def count_words(subreddit, word_list, hot_list=[], init=0, after="null"):
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    agt = {"User-Agent": "linux:1:v2.1 (by /u/heimer_r)"}
+    payload = {"limit": "100", "after": after}
+    hot = requests.get(url, headers=agt, params=payload, allow_redirects=False)
+    if hot.status_code == 200:
+        posts = hot.json().get("data").get("children")
+        hot_list += [post.get("data").get("title") for post in posts]
+        after = hot.json().get("data").get("after")
+        if after is not None:
+            count_words(subreddit, word_list, hot_list, 1, after)
+        if init == 0:
+            hot_str = " ".join(hot_list)
+            hot_words = hot_str.split(" ")
+            word_list_low = sorted(word_list)
+            rt = []
+            for word in word_list_low:
+                num = len(
+                    list(
+                        filter(
+                            lambda hot_w: hot_w.lower() == word.lower(),
+                            hot_words)))
+                if num != 0:
+                    rt.append([word, num])
+            if len(rt) != 0:
+                i = 0
+                while i < len(rt) - 1:
+                    if rt[i + 1][0] is not None and rt[i][0] == rt[i + 1][0]:
+                        rt[i][1] += rt[i + 1][1]
+                        rt.pop(i + 1)
+                        rt.append([None, None])
+                        i -= 1
+                    i += 1
+                r = list(filter(lambda x: x != [None, None], rt))
+                r_sorted = sorted(r, key=lambda x: (x[1]), reverse=True)
+                for i in r_sorted:
+                    print(*i, sep=": ")
