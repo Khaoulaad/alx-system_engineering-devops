@@ -1,44 +1,14 @@
-const HOST = 54.175.189.228;
-$(function () {
-  const amenitiesChecked = {};
+[Unit]
+Description=Gunicorn instance to serve AirBnB clone
+After=network.target
 
-  // Listen for changes on each input checkbox tag
-  $('.amenities input:checkbox').change(function (event) {
-    if ($(this).is(':checked')) {
-      // store the Amenity ID in the list
-      amenitiesChecked[$(this).data('id')] = $(this).data('name');
-      updateCheckedAmenitiesInterface();
-    } else {
-      // remove the Amenity ID from the list
-      delete amenitiesChecked[$(this).data('id')];
-      updateCheckedAmenitiesInterface();
-    }
-  });
-
-  // update the h4 tag inside div Amenities with list of Amenities checked
-  const updateCheckedAmenitiesInterface = () => {
-    const length = Object.keys(amenitiesChecked).length;
-    let content = ''; let i = 0;
-
-    for (const amenity of Object.values(amenitiesChecked)) {
-      const last = i === length - 1;
-      content += amenity;
-      if (!last) {
-        content += ', ';
-      }
-      i++;
-    }
-
-    $('.amenities h4').text(content);
-  };
-
-  $.get('http://127.0.0.1:5001/api/v1/status/',
-    function (data, textStatus, jqXHR) {
-      if (data.status === 'OK') {
-        $('div#api_status').addClass('available');
-      } else {
-        $('div#api_status').removeClass('available');
-      }
-    }
-  );
-});
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/AirBnB_clone_v4
+ExecStart=gunicorn --workers 3 --bind 0.0.0.0:5003 web_dynamic.2-hbnb:app --error-logfile /tmp/airbnb-error.log
+Restart=always
+StandardOutput=append:/tmp/airbnb-access.log
+StandardError=append:/tmp/airbnb-error.log
+SyslogIdentifier=gunicorn
+[Install]
+WantedBy=multi-user.target
