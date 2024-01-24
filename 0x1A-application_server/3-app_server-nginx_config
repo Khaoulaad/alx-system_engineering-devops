@@ -5,7 +5,7 @@ server {
         index index.html index.htm index.nginx-debian.html;
         server_name 54.175.189.228;
         add_header X-Served-By 410727-web-01;
-        location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$1 {
+        location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
         proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
         }
 if ($request_filename ~ redirect_me){
